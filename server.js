@@ -26,8 +26,8 @@ app.use(function (req, res, next) {
 // from a cloud data store
 const mockEvents = {
     events: [
-        { title: 'an event', id: 1, description: 'something really cool' },
-        { title: 'another event', id: 2, description: 'something even cooler' }
+        { title: 'an event', id: 1, description: 'something really cool', likeCount: 0, comments: [{text: 'My first Comment'}] },
+        { title: 'another event', id: 2, description: 'something even cooler', likeCount: 0, comments: [{text: 'My another comment'}] }
     ]
 };
 
@@ -55,7 +55,8 @@ app.post('/event', (req, res) => {
     const ev = { 
         title: req.body.title, 
         description: req.body.description,
-        id : mockEvents.events.length + 1
+        id : mockEvents.events.length + 1,
+        likeCount : 0
      }
     
      if(req.body.title == "" || req.body.description == ""){
@@ -70,6 +71,51 @@ app.post('/event', (req, res) => {
         res.json(mockEvents);
      }
     
+});
+
+app.post('/like', (req, res) => {
+
+    //mockEvents.events.findByValueOfObject("id", req.body.id)
+    //const picked = mockEvents.events.find(o => o.id === req.body.id);
+
+    //Find index of specific object using findIndex method.    
+    const objIndex = mockEvents.events.findIndex((obj => obj.id == req.body.id));
+
+    //Log object to Console.
+    console.log("Before update: ", mockEvents.events[objIndex])
+
+    //Update object's name property.
+    mockEvents.events[objIndex].likeCount = mockEvents.events[objIndex].likeCount + 1;
+
+    //Log object to console again.
+    console.log("After update: ", mockEvents.events[objIndex].likeCount[objIndex])
+
+    res.json(mockEvents);
+
+
+});
+
+app.post('/comment', (req, res) => {
+
+   //Find index of specific object using findIndex method.    
+    const objIndex = mockEvents.events.findIndex((obj => obj.id == req.body.id));
+
+    //Log object to Console.
+    console.log("Before update: ", mockEvents.events[objIndex])
+
+    const commentNew = {
+        text: req.body.comment
+    }
+    
+    //Update object's name property.
+    mockEvents.events[objIndex].comments.push(commentNew)
+
+    //Log object to console again.
+    console.log("After update: ", mockEvents.events[objIndex].likeCount[objIndex])
+
+    res.json(mockEvents);
+
+
 });
 
 app.use((err, req, res, next) => {
